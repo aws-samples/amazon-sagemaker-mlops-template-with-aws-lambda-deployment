@@ -1,23 +1,21 @@
+from aws_cdk import Duration, Stack
+from aws_cdk import aws_codebuild as _codebuild
+from aws_cdk import aws_codecommit as _codecommit
+from aws_cdk import aws_codepipeline as _codepipeline
+from aws_cdk import aws_codepipeline_actions as _actions
+from aws_cdk import aws_ec2 as _ec2
+from aws_cdk import aws_ecr as _ecr
+from aws_cdk import aws_events as _events
+from aws_cdk import aws_events_targets as _targets
+from aws_cdk import aws_iam as _iam
+from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_s3 as _s3
+from aws_cdk import aws_s3_deployment as _s3_deploy
+from aws_cdk import aws_sagemaker as _sagemaker
 from constructs import Construct
-from aws_cdk import (
-    Duration,
-    Stack,
-    aws_ec2 as _ec2,
-    aws_iam as _iam,
-    aws_lambda as _lambda,
-    aws_s3 as _s3,
-    aws_s3_deployment as _s3_deploy,
-    aws_codecommit as _codecommit,
-    aws_codebuild as _codebuild,
-    aws_codepipeline as _codepipeline,
-    aws_codepipeline_actions as _actions,
-    aws_events as _events,
-    aws_events_targets as _targets,
-    aws_sagemaker as _sagemaker,
-    aws_ecr as _ecr,
-)
 
 from .role_policy import role_policy
+
 
 class SageMakerPipelineSourceCodeStack(Stack):
     """SageMakerPipelineSourceCodeStack class to deploy the AWS CDK stack.
@@ -35,10 +33,10 @@ class SageMakerPipelineSourceCodeStack(Stack):
 
     def create_iam_role(self, **kwargs) -> _iam.Role:
         """Create the IAM role
-        
+
         Args:
             No arguments
-        
+
         Returns:
             No return value
         """
@@ -77,10 +75,10 @@ class SageMakerPipelineSourceCodeStack(Stack):
 
     def create_s3_artifact_bucket(self, **kwargs) -> _s3.Bucket:
         """Create the Amazon S3 bucket to store all ML artifacts in
-        
+
         Args:
             No arguments
-        
+
         Returns:
             No return value
         """
@@ -96,11 +94,11 @@ class SageMakerPipelineSourceCodeStack(Stack):
         repository_tag: str,
         **kwargs) -> _codecommit.Repository:
         """Create an AWS CodeCommit repository
-        
+
         Args:
             construct_id:       The construct ID visible on the CloudFormation console for this resource
             repository_tag:     Indicating what repository type, values `modelbuild` or `modeldeploy`
-        
+
         Returns:
             repository:         The AWS CodeCommit repository
         """
@@ -121,10 +119,10 @@ class SageMakerPipelineSourceCodeStack(Stack):
         rule_tag: str,
         **kwargs) -> str:
         """Helper function to map event rule type to a description.
-        
+
         Args:
             rule_tag:           Indicating what rule type, values `build` or `code`
-        
+
         Returns:
             output:             The description to output
         """
@@ -143,14 +141,14 @@ class SageMakerPipelineSourceCodeStack(Stack):
         rule_tag: str,
         resource: _codepipeline.Pipeline,
         **kwargs) -> _events.Rule:
-        """Create specific Event rules to trigger AWS CodePipeline based on push to 
+        """Create specific Event rules to trigger AWS CodePipeline based on push to
             `main` branch in the corresponding AWS CodeCommit repository.
-        
+
         Args:
             construct_id:       The construct ID visible on the CloudFormation console for this resource
             rule_tag:           Indicating what rule type, values `build` or `code`
             resource:           The AWS CodePipeline to trigger
-        
+
         Returns:
             event_rule:         The event rule object that was created
         """
@@ -183,10 +181,10 @@ class SageMakerPipelineSourceCodeStack(Stack):
         **kwargs):
         """Create specific Event rules to trigger AWS CodePipeline based updated
             SageMaker Model registry model package.
-        
+
         Args:
             resource:           The AWS CodePipeline to trigger
-        
+
         Returns:
             event_rule:         The event rule object that was created
         """
@@ -219,11 +217,11 @@ class SageMakerPipelineSourceCodeStack(Stack):
             step. This pipeline will use `repository` as a source and execute this
             code in the AWS CodeBuild step. This pipeline represents the model building
             step.
-        
+
         Args:
             repository:             The AWS CodeCommit repository that will be leveraged
                                     in the pipeline
-        
+
         Returns:
             model_build_pipeline:   The AWS CDK CodePipeline object
         """
@@ -260,7 +258,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             pipeline_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-modelbuild",
             role=self.mlops_template_product_use_role,
             artifact_bucket=self.mlops_artifacts_bucket,)
-        
+
         # Define actions that are executed in CodePipeline:
         # - `Source` leverages the AWS CodeCommit `repository` and copies that into AWS CodeBuild
         # - `Deploy` will run AWS CodeBuild leveragin the pulled `repository`
@@ -270,7 +268,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             branch="main",
             repository=repository,
             code_build_clone_output=True)
-        
+
         build_action = _actions.CodeBuildAction(
             action_name="Deploy",
             project=sagemaker_modelbuild_pipeline,
@@ -295,11 +293,11 @@ class SageMakerPipelineSourceCodeStack(Stack):
             step. This pipeline will use `repository` as a source and execute this
             code in the AWS CodeBuild step. This pipeline represents the model deployment
             step.
-        
+
         Args:
             repository:             The AWS CodeCommit repository that will be leveraged
                                     in the pipeline
-        
+
         Returns:
             model_deploy_pipeline:   The AWS CDK CodePipeline object
         """
@@ -339,7 +337,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             pipeline_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-modeldeploy",
             role=self.mlops_template_product_use_role,
             artifact_bucket=self.mlops_artifacts_bucket,)
-        
+
         # Define actions that are executed in CodePipeline:
         # - `Source` leverages the AWS CodeCommit `repository` and copies that into AWS CodeBuild
         # - `Deploy` will run AWS CodeBuild leveragin the pulled `repository`
@@ -349,7 +347,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             branch="main",
             repository=repository,
             code_build_clone_output=True)
-        
+
         build_action = _actions.CodeBuildAction(
             action_name="Deploy",
             project=model_deploy_build_project,
@@ -380,7 +378,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             oriented automated pipeline that helps build your Docker containers and push them to
             Amazon ECR. These images are registered in Amazon SageMaker and then made available
             to your Amazon SageMaker Pipeline that is run in `modelbuild`
-        
+
         Args:
             construct_id:           The construct ID visible on the CloudFormation console for this resource
             image_type:             The image type you want to create, options: `processing`, `training`
@@ -390,7 +388,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             retraining_days:        The number of days these containers will get re-build. This also indicates
                                     how often your `modelbuil`, i.e. your model re-training cycle, will be
             container_image_tag:    The Amazon ECR image tag that indicates a new container was released, default: `latest`
-        
+
         Returns:
             No return
         """
@@ -449,7 +447,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             f"ImageBuildPipeline-{image_type}",
             pipeline_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-{image_type}-imagebuild",
             artifact_bucket=self.mlops_artifacts_bucket)
-        
+
         # Define actions that are executed in CodePipeline:
         # - `Source` leverages the AWS CodeCommit `repository` and copies that into AWS CodeBuild
         # - `Deploy` will run AWS CodeBuild leveragin the pulled `repository`
@@ -459,7 +457,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             branch="main",
             repository=image_build_repository,
             code_build_clone_output=True)
-        
+
         build_action = _actions.CodeBuildAction(
             action_name="Deploy",
             project=image_build_project,
@@ -543,7 +541,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
         **kwargs,
     ) -> None:
         """Initialize the class.
-        
+
         Args:
             scope:                                      The AWS CDK app that is deployed
             construct_id:                               The construct ID visible on the CloudFormation console for this resource
@@ -555,7 +553,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             aws_account_id:                             The AWS account the solution gets deployed in
             aws_region:                                 The region this stack will be deployed to
             container_image_tag:                        The Amazon ECR image tag that indicates a new container was released, default: `latest`
-        
+
         Returns:
             No return
         """
@@ -565,7 +563,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
         self.sagemaker_project_id = sagemaker_project_id
         self.aws_account_id = aws_account_id
         self.aws_region = aws_region
-        
+
         # Create IAM role wiht IAM policy and set attribute
         self.create_iam_role()
 

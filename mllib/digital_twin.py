@@ -5,16 +5,16 @@ import random
 import numpy as np
 import pandas as pd
 from quantile_regression import QuantileRegression
+from scikeras.wrappers import KerasRegressor
+from sklearn.compose import ColumnTransformer
 from sklearn.ensemble import IsolationForest
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import PolynomialFeatures, RobustScaler, MinMaxScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from scikeras.wrappers import KerasRegressor
+from sklearn.preprocessing import (MinMaxScaler, OneHotEncoder,
+                                   PolynomialFeatures, RobustScaler)
 from tensorflow import keras
 from tensorflow.keras import layers
-
 
 
 class DigitalTwin:
@@ -74,7 +74,7 @@ class DigitalTwin:
         self.features = features
         self.target = target
         self.config_col = config_col
-        
+
     def _quantile_regression(
         self,
         df: pd.DataFrame,
@@ -156,7 +156,7 @@ class DigitalTwin:
             self.models[config] = model
 
         return self
-    
+
     def _baseline_model(self):
         """Baseline Keras model
         Parameters
@@ -177,7 +177,7 @@ class DigitalTwin:
         # Compile model
         model.compile(loss='mean_absolute_error', optimizer='adam')
         return model
-    
+
     def _keras_regression(
         self,
         df: pd.DataFrame,
@@ -188,7 +188,7 @@ class DigitalTwin:
         optimizer__learning_rate: float=0.001,
         epochs: int=1000,
         verbose: int=0):
-        
+
         regression = KerasRegressor(
             model=self._baseline_model(),
             optimizer=optimizer,
@@ -233,7 +233,7 @@ class DigitalTwin:
 
         test_mae_errors = mean_absolute_error(test_pred, y_test)
         train_mae_errors = mean_absolute_error(train_pred, y_train)
-        
+
         for config in self.configurations:
             test_index = X_test.config == config
             temp = X_test[test_index]
@@ -270,7 +270,7 @@ class DigitalTwin:
                         f"Combination {config} yields: MAE = {self.test_mae_errors[config]}"
                     )
                     print("------------")
-                
+
         return self
 
     def train(
@@ -530,9 +530,9 @@ class DigitalTwin:
                 )
             ) + (train_error_weight * self.test_mae_errors[name])
             power_consumption[name] = np.nansum(power_predictions)
-                
+
         return power_consumption
-    
+
     def objective_function_keras(
         self, clf, flow, press, n=100, boundary={}, train_error_weight=1.0
     ):
@@ -578,7 +578,7 @@ class DigitalTwin:
             )
             power_predictions = self.keras_reg["regressor"].model(D)
             power_consumption[name] = np.nansum(power_predictions)
-                
+
         return power_consumption
 
     def make_trial(
@@ -631,7 +631,7 @@ class DigitalTwin:
                     boundary=boundary,
                     train_error_weight=train_error_weight,
                 )
-                
+
             # Setting is not compliant
             if len(energy) == 0:
                 return {}

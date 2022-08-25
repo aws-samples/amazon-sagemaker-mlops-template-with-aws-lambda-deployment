@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 import os
-import boto3
 import random
 import string
 
 import aws_cdk as _cdk
-from SageMakerPipelineSourceCode.SageMakerPipelineSourceCode_stack import (
-    SageMakerPipelineSourceCodeStack)
+import boto3
+from SageMakerPipelineSourceCode.SageMakerPipelineSourceCode_stack import \
+    SageMakerPipelineSourceCodeStack
+
 
 def get_random_string(length):
     # choose from all lowercase letter

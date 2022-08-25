@@ -1,9 +1,9 @@
+import argparse
 import logging
 import pathlib
-import argparse
+import sys
 from datetime import datetime, timedelta
 
-import sys
 import boto3
 import numpy as np
 import pandas as pd

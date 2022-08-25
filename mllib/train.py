@@ -70,7 +70,7 @@ if __name__ == "__main__":
     )
 
     if args.dual_model:
-    
+
         twin = twin.train(
             df=train_data,
             test_size=args.test_size,
@@ -84,7 +84,7 @@ if __name__ == "__main__":
         for configs in configurations:
             print(f"Train_{configs}_quantile_mae={twin.train_mae_errors[configs]};")
             print(f"Validation_{configs}_quantile_mae={twin.test_mae_errors[configs]};")
-    
+
     twin = twin.train(
         df=train_data,
         test_size=args.test_size,

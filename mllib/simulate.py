@@ -1,22 +1,21 @@
-import boto3
-import logging
-import pathlib
 import argparse
-from datetime import datetime
 import json
-
-import joblib
-import tarfile
-import numpy as np
-import pandas as pd
-
+import logging
 import multiprocessing as mp
-
+import pathlib
 # Make library accessible
 import sys
+import tarfile
+from datetime import datetime
+
+import boto3
+import joblib
+import numpy as np
+import pandas as pd
+from digital_twin import DigitalTwin
+
 sys.path.append("/opt/ml/code/")
 
-from digital_twin import DigitalTwin
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -98,18 +97,18 @@ if __name__ == "__main__":
 
     base_dir = "/opt/ml/processing"
     pathlib.Path(f"{base_dir}/data").mkdir(parents=True, exist_ok=True)
-    
+
     x = args.model_artefact
     bucket = x.split("/")[2]
     key = "/".join(x.split("/")[3:])
     with open('model.tar.gz', 'wb') as f:
         s3.download_fileobj(bucket, key, f)
-        
+
     tar = tarfile.open("model.tar.gz")
     tar.extractall()
-    
+
     twin = joblib.load("model.joblib")
-    
+
     low = 180
     high = 450
     flows = []
@@ -138,11 +137,11 @@ if __name__ == "__main__":
         tmp[pressures.columns.tolist()] = pressures.iloc[i, :]
         data = pd.concat(objs=[data, tmp], axis=0)
     data = data.reset_index(drop=True)
-    
+
     pool = mp.Pool(mp.cpu_count())
     predictions = [pool.apply(parallel_func, args=(dat, )) for dat in np.array(data)]
     pool.close()
-            
+
     df = pd.DataFrame(predictions)
     df.loc[:, clf] = df.loc[:, clf].apply(lambda x: np.round(x/100, 0), axis=1)
     df["minimum_key"] = df.loc[:, clf].apply(lambda x: extract_key(x=x), axis=1)

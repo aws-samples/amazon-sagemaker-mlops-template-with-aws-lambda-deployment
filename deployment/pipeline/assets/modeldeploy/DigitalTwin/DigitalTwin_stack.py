@@ -1,12 +1,9 @@
+from aws_cdk import Duration, Stack
+from aws_cdk import aws_iam as _iam
+from aws_cdk import aws_lambda as _lambda
+from aws_cdk import aws_lambda_event_sources as _event_sources
+from aws_cdk import aws_s3 as _s3
 from constructs import Construct
-from aws_cdk import (
-    Stack,
-    Duration,
-    aws_lambda as _lambda,
-    aws_lambda_event_sources as _event_sources,
-    aws_s3 as _s3,
-    aws_iam as _iam
-)
 
 policy = [
     _iam.PolicyStatement(
@@ -28,7 +25,7 @@ class DigitalTwinStack(Stack):
 
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
         super().__init__(scope, id, **kwargs)
-        
+
         # Defines an AWS Lambda resource
         _lambda.DockerImageFunction(
             self, 'DigitalTwin',

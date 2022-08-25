@@ -3,6 +3,7 @@ and then triggers the codepipeline.
 """
 
 import json
+
 import boto3
 
 s3 = boto3.client("s3")
@@ -32,7 +33,7 @@ def put_manifest(uri, bucket, key):
             "containsHeader": "true"
         }
     }
-    
+
     s3.put_object(
         Body=json.dumps(manifest),
         Bucket=bucket,
@@ -52,12 +53,12 @@ def lambda_handler(event, context):
     training = event["TRAINING"]
     simulation = event["SIMULATION"]
     bucket = event["BUCKET"]
-    
+
     put_manifest(
         uri=f"{training}/dataset.csv",
         bucket=bucket,
         key="quicksight/resampled_data.json")
-    
+
     put_manifest(
         uri=f"{simulation}/simulation.csv",
         bucket=bucket,

@@ -1,23 +1,22 @@
 """This is the main app that runs in your AWS Lambda function."""
 
+import base64
+import io
+import json
+import logging
+import os
 # Import libraries
 import tempfile
-import logging
-import joblib
-import base64
-import json
-import os
 
 import boto3
 import botocore
-import io
-
+import joblib
 import numpy as np
 import pandas as pd
-
-import optuna
 from digital_twin import DigitalTwin
 from quantile_regression import QuantileRegression
+
+import optuna
 
 features = [
     "flow",
@@ -86,7 +85,7 @@ def lambda_handler(event, context):
 
     # Return your response
     results = [{list(x.keys())[0]: float(x[list(x.keys())[0]]/n)} for x in results]
-    
+
     logging.info("Return...")
     return {
         "statusCode": 200,
