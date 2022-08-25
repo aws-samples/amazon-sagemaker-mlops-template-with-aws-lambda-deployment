@@ -87,8 +87,6 @@ if __name__ == "__main__":
     # Configure logging to output the line number and message
     log_format = "%(levelname)s: [%(filename)s:%(lineno)s] %(message)s"
     logging.basicConfig(format=log_format, level=args.log_level)
-    
+
     status = download_model_tar_from_s3(model_package_group_name=args.model_package_group_name)
     logging.info(f"Status = {status}")
-    
-    

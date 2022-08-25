@@ -19,7 +19,7 @@ required_packages = [
     "imbalanced-learn==0.9.1",
     "werkzeug==2.0.3",
     "pandas==1.2.4",
-    "numpy==1.21.0",
+    "numpy==1.22.0",
     "xgboost==1.5.2",
     "scikit-learn==1.1.1",
     "sagemaker",

@@ -1,7 +1,9 @@
 import aws_cdk as core
 import aws_cdk.assertions as assertions
-from SageMakerPipelineSourceCode.SageMakerPipelineSourceCode_stack import SageMakerPipelineSourceCodeStack
-    
+from SageMakerPipelineSourceCode.SageMakerPipelineSourceCode_stack import \
+    SageMakerPipelineSourceCodeStack
+
+
 def test_code_commit_repos_created():
     app = core.App()
     stack = SageMakerPipelineSourceCodeStack(app,
@@ -17,8 +19,8 @@ def test_code_commit_repos_created():
     template = assertions.Template.from_stack(stack)
 
     template.resource_count_is("AWS::CodeCommit::Repository", 4)
-    
-    
+
+
 def test_code_pipelines_created():
     app = core.App()
     stack = SageMakerPipelineSourceCodeStack(app,

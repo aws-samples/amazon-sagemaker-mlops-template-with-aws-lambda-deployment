@@ -20,16 +20,14 @@ from sagemaker.estimator import Estimator
 from sagemaker.inputs import TrainingInput
 from sagemaker.lambda_helper import Lambda
 from sagemaker.model_metrics import MetricsSource, ModelMetrics
-from sagemaker.processing import ProcessingInput, ProcessingOutput, ScriptProcessor
+from sagemaker.processing import (ProcessingInput, ProcessingOutput,
+                                  ScriptProcessor)
 from sagemaker.sklearn.processing import SKLearnProcessor
 from sagemaker.workflow.condition_step import ConditionStep
 from sagemaker.workflow.conditions import ConditionLessThanOrEqualTo
 from sagemaker.workflow.functions import JsonGet
-from sagemaker.workflow.lambda_step import (
-    LambdaOutput,
-    LambdaOutputTypeEnum,
-    LambdaStep,
-)
+from sagemaker.workflow.lambda_step import (LambdaOutput, LambdaOutputTypeEnum,
+                                            LambdaStep)
 from sagemaker.workflow.parameters import ParameterInteger, ParameterString
 from sagemaker.workflow.pipeline import Pipeline
 from sagemaker.workflow.properties import PropertyFile
@@ -75,7 +73,7 @@ def create_lambda_role(role_name):
             RoleName=role_name,
             PolicyArn="arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
         )
-        
+
         response = iam.create_policy(
             PolicyName='LambdaS3Access',
             PolicyDocument=json.dumps({
@@ -96,7 +94,7 @@ def create_lambda_role(role_name):
             }),
             Description='Enable write access to S3',
         )
-        
+
         arn = response["Policy"]["Arn"]
 
         response = iam.attach_role_policy(
@@ -368,7 +366,7 @@ def get_pipeline(
             py_version="py3",
             instance_type=inference_instance_type,
         )
-        
+
     simulate_processor = ScriptProcessor(
         image_uri=processing_image_uri,
         instance_type="ml.c5.9xlarge",
@@ -387,9 +385,9 @@ def get_pipeline(
         ],
         code=os.path.join(BASE_DIR, "simulate.py"),
         job_arguments=["--model-artefact", step_train.properties.ModelArtifacts.S3ModelArtifacts],
-        depends_on=[step_train], 
+        depends_on=[step_train],
     )
-    
+
     # Lambda helper class can be used to create the Lambda function
     func = Lambda(
         function_name="lambda-update-manifest",
