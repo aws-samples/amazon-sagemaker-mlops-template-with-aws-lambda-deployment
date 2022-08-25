@@ -1,0 +1,13 @@
+pip==22.1.2
+boto3==1.24.22
+shap==0.41.0
+imbalanced-learn==0.9.1
+werkzeug==2.0.3
+pandas==1.2.4
+numpy==1.21.0
+xgboost==1.5.2
+scikit-learn==1.1.1
+optuna==2.10.1
+scikeras==0.8.0
+tensorflow==2.9.1
+keras==2.9.0

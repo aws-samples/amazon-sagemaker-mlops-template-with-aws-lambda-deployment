@@ -1,0 +1,26 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+    # Extracting endpoint information using jq based on region and sed to strip off the quotes at both ends of the string.
+      - ECR_ENDPOINT=`jq --arg region "$AWS_REGION" '.[$region]' xgboost-1.5-1-cpu-py3.json | sed 's/"//g'`
+    # Using cut to remove the 12 digit account number and the period from ECR_ENDPOINT to retrieve repository of the base image.
+      - BASE_IMAGE_REPOSITORY=`echo $ECR_ENDPOINT | cut -c14-`
+      - aws --region $AWS_REGION ecr get-login-password | docker login --username AWS --password-stdin $ECR_ENDPOINT
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build --build-arg ECR_ENDPOINT=$ECR_ENDPOINT -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
+  post_build:
+    commands:
+      - if [ $CODEBUILD_BUILD_SUCCEEDING = 0 ]; then exit 1; fi
+      - echo Build completed on `date`
+      - echo Logging in to Amazon ECR...
+      - aws --region $AWS_REGION ecr get-login-password | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY
+      - echo Pushing the Docker image...
+      - docker push $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG
+      - aws --region $AWS_REGION sagemaker create-image-version --image-name $IMAGE_REPO_NAME --base-image $AWS_ACCOUNT_ID.$BASE_IMAGE_REPOSITORY/$IMAGE_REPO_NAME:$IMAGE_TAG

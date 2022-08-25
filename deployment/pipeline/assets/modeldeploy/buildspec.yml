@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  shell: bash
+
+phases:
+  install:
+    runtime_versions:
+      python: 3.8
+    commands:
+      - python3 -m ensurepip --upgrade
+      - python3 -m pip install --upgrade pip
+      - python3 -m pip install --upgrade virtualenv
+      - python3 -m venv .venv
+      - source .venv/bin/activate
+      - npm install -g aws-cdk@2.26.0
+      - pip install -r requirements.txt
+      - cdk bootstrap
+  build:
+    commands:
+      - python build.py --model-package-group-name "$SOURCE_MODEL_PACKAGE_GROUP_NAME"
+      - tar -xf model.tar.gz
+      - cp model.joblib lambda/digital_twin
+      - rm model.tar.gz
+      - rm model.joblib
+      - cdk deploy --require-approval never
