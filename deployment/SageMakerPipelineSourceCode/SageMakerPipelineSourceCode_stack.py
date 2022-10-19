@@ -405,7 +405,8 @@ class SageMakerPipelineSourceCodeStack(Stack):
         training_ecr_repo = _ecr.Repository(
             self,
             f"DestinationEcrRepository-{image_type}",
-            repository_name=f"sagemaker-{self.sagemaker_project_id}-{image_type}-imagebuild")
+            repository_name=f"sagemaker-{self.sagemaker_project_id}-{image_type}-imagebuild",
+            image_scan_on_push = True)
 
         # Create AWS CodeCommit repository
         image_build_repository = _codecommit.Repository(
