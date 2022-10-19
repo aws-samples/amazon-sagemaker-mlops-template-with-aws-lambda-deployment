@@ -45,7 +45,7 @@ role_policy = [
             "ec2:DescribeRouteTables",
         ],
         resources=[
-            "*",
+            "arn:aws:ec2:*:*:route-table/*",
         ],
     ),
     _iam.PolicyStatement(
@@ -53,7 +53,7 @@ role_policy = [
             "states:ListStateMachines",
         ],
         resources=[
-            "*",
+            "arn:aws:states:*:*:stateMachine:*",
         ],
     ),
     _iam.PolicyStatement(
@@ -115,7 +115,7 @@ role_policy = [
             "logs:UpdateLogDelivery",
         ],
         resources=[
-            "*",
+            "arn:aws:logs:*",
         ],
     ),
     _iam.PolicyStatement(
@@ -289,6 +289,7 @@ role_policy = [
         actions=[
             "sagemaker:*",
         ],
+        effect=_iam.Effect.DENY,
         not_resources=[
             "arn:aws:sagemaker:*:*:domain/*",
             "arn:aws:sagemaker:*:*:user-profile/*",
