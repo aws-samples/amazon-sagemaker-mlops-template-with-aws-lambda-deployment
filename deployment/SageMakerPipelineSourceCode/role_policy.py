@@ -289,8 +289,7 @@ role_policy = [
         actions=[
             "sagemaker:*",
         ],
-        effect=_iam.Effect.DENY,
-        not_resources=[
+        resources=[
             "arn:aws:sagemaker:*:*:domain/*",
             "arn:aws:sagemaker:*:*:user-profile/*",
             "arn:aws:sagemaker:*:*:app/*",
