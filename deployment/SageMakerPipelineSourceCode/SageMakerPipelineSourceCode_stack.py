@@ -53,7 +53,10 @@ class SageMakerPipelineSourceCodeStack(Stack):
             description="The SageMakerMLOpsProductUseRole for service interactions.",
             inline_policies={
                 "SageMakerMLOpsProductUseInlinePolicy": self.mlops_template_product_use_policy,
-            }
+            },
+            managed_policies=[
+                _iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerFullAccess")
+            ]
         )
 
         # Add more service principals the IAM role can assume
