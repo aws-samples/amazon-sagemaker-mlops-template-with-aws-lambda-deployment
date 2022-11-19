@@ -40,7 +40,7 @@ extras = {
 }
 setuptools.setup(
     name=version.__title__,
-    description=version._description__,
+    description=version.__description__,
     version=version.__version__,
     author=version.__author__,
     author_email=version.__author_email__,
