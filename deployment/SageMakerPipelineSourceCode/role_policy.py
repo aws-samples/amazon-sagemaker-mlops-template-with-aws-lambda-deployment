@@ -1,6 +1,85 @@
 from aws_cdk import aws_iam as _iam
 
-role_policy = [
+role_policy_ecr_image_build = [
+    _iam.PolicyStatement(
+        actions=[
+            "cloudformation:DescribeStackEvents",
+            "cloudformation:GetTemplate",
+            "cloudformation:CreateChangeSet",
+            "cloudformation:CreateStack",
+            "cloudformation:DescribeChangeSet",
+            "cloudformation:DeleteChangeSet",
+            "cloudformation:DeleteStack",
+            "cloudformation:DescribeStacks",
+            "cloudformation:ExecuteChangeSet",
+            "cloudformation:SetStackPolicy",
+            "cloudformation:UpdateStack",
+        ],
+        resources=[
+            "arn:aws:cloudformation:*:*:stack/*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "iam:GetRole",
+            "iam:GetRolePolicy",
+            "iam:CreateRole",
+            "iam:DetachRolePolicy",
+            "iam:AttachRolePolicy",
+            "iam:DeleteRole",
+            "iam:PutRolePolicy",
+            "iam:DeleteRolePolicy",
+            "iam:PassRole",
+            "iam:CreatePolicy",
+        ],
+        resources=[
+            "arn:aws:iam::*:role/*",
+            "arn:aws:iam::*:policy/*",
+        ],
+    ),
+]
+
+role_policy_model_build = [
+    _iam.PolicyStatement(
+        actions=[
+            "cloudformation:DescribeStackEvents",
+            "cloudformation:GetTemplate",
+            "cloudformation:CreateChangeSet",
+            "cloudformation:CreateStack",
+            "cloudformation:DescribeChangeSet",
+            "cloudformation:DeleteChangeSet",
+            "cloudformation:DeleteStack",
+            "cloudformation:DescribeStacks",
+            "cloudformation:ExecuteChangeSet",
+            "cloudformation:SetStackPolicy",
+            "cloudformation:UpdateStack",
+        ],
+        resources=[
+            "arn:aws:cloudformation:*:*:stack/*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "iam:GetRole",
+            "iam:GetRolePolicy",
+            "iam:CreateRole",
+            "iam:DetachRolePolicy",
+            "iam:AttachRolePolicy",
+            "iam:DeleteRole",
+            "iam:PutRolePolicy",
+            "iam:DeleteRolePolicy",
+            "iam:PassRole",
+            "iam:CreatePolicy",
+        ],
+        resources=[
+            "arn:aws:iam::*:role/*",
+            "arn:aws:iam::*:policy/*",
+        ],
+    ),
+]
+
+
+role_policy_model_deploy = [
     _iam.PolicyStatement(
         actions=[
             "cloudformation:DescribeStackEvents",
