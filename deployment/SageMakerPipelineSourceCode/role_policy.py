@@ -65,24 +65,6 @@ role_policy_ecr_image_build = [
 role_policy_model_build = [
     _iam.PolicyStatement(
         actions=[
-            "cloudformation:DescribeStackEvents",
-            "cloudformation:GetTemplate",
-            "cloudformation:CreateChangeSet",
-            "cloudformation:CreateStack",
-            "cloudformation:DescribeChangeSet",
-            "cloudformation:DeleteChangeSet",
-            "cloudformation:DeleteStack",
-            "cloudformation:DescribeStacks",
-            "cloudformation:ExecuteChangeSet",
-            "cloudformation:SetStackPolicy",
-            "cloudformation:UpdateStack",
-        ],
-        resources=[
-            "arn:aws:cloudformation:*:*:stack/*",
-        ],
-    ),
-    _iam.PolicyStatement(
-        actions=[
             "iam:GetRole",
             "iam:GetRolePolicy",
             "iam:CreateRole",
@@ -97,6 +79,14 @@ role_policy_model_build = [
         resources=[
             "arn:aws:iam::*:role/*",
             "arn:aws:iam::*:policy/*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "sagemaker:DescribeImageVersion",
+        ],
+        resources=[
+            "arn:aws:sagemaker:*:*:image-version/sagemaker-*-imagebuild/*",
         ],
     ),
 ]

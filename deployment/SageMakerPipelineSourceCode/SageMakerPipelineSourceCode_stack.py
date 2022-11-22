@@ -150,6 +150,13 @@ class SageMakerPipelineSourceCodeStack(Stack):
                     _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))
+        self.mlops_sagemaker_pipeline_role.assume_role_policy.add_statements(
+            _iam.PolicyStatement(
+                actions=["sts:AssumeRole"],
+                effect=_iam.Effect.ALLOW,
+                principals=[
+                    _iam.ServicePrincipal("sagemaker.amazonaws.com"),
+                ]))
 
     def create_s3_artifact_bucket(self, **kwargs) -> _s3.Bucket:
         """Create the Amazon S3 bucket to store all ML artifacts in
