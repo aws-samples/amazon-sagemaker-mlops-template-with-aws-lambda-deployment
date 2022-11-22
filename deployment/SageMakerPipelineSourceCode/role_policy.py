@@ -84,9 +84,27 @@ role_policy_model_build = [
     _iam.PolicyStatement(
         actions=[
             "sagemaker:DescribeImageVersion",
+            "sagemaker:DescribePipeline",
+            "sagemaker:AddTags",
+            "sagemaker:ListTags",
+            "sagemaker:CreatePipeline",
+            "sagemaker:StartPipelineExecution",
+            "sagemaker:DescribePipelineExecution",
+            "sagemaker:UpdatePipeline"
         ],
         resources=[
             "arn:aws:sagemaker:*:*:image-version/sagemaker-*-imagebuild/*",
+            "arn:aws:sagemaker:*:*:pipeline/enopt-project-cdk-*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "lambda:CreateFunction",
+            "lambda:InvokeFunction",
+            "lambda:UpdateFunctionCode",
+        ],
+        resources=[
+            "arn:aws:lambda:*:*:function:lambda-update-manifest",
         ],
     ),
 ]
