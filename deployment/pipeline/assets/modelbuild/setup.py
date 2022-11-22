@@ -27,7 +27,7 @@ required_packages = [
     "pytest==6.2.5",
     "optuna==2.10.1",
     "scikeras==0.8.0",
-    "tensorflow-cpu==2.9.1",
+    "tensorflow-cpu==2.9.3",
     "keras==2.9.0",
 ]
 extras = {
