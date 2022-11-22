@@ -1,24 +1,6 @@
 from aws_cdk import aws_iam as _iam
 
-role_policy_training_image_build = [
-    _iam.PolicyStatement(
-        actions=[
-            "cloudformation:DescribeStackEvents",
-            "cloudformation:GetTemplate",
-            "cloudformation:CreateChangeSet",
-            "cloudformation:CreateStack",
-            "cloudformation:DescribeChangeSet",
-            "cloudformation:DeleteChangeSet",
-            "cloudformation:DeleteStack",
-            "cloudformation:DescribeStacks",
-            "cloudformation:ExecuteChangeSet",
-            "cloudformation:SetStackPolicy",
-            "cloudformation:UpdateStack",
-        ],
-        resources=[
-            "arn:aws:cloudformation:*:*:stack/*",
-        ],
-    ),
+role_policy_ecr_image_build = [
     _iam.PolicyStatement(
         actions=[
             "iam:GetRole",
@@ -37,43 +19,45 @@ role_policy_training_image_build = [
             "arn:aws:iam::*:policy/*",
         ],
     ),
-]
+    _iam.PolicyStatement(
+        actions=[
+            "ecr:DeleteRepository",
+            "ecr:CompleteLayerUpload",
+            "ecr:UploadLayerPart",
+            "ecr:InitiateLayerUpload",
+            "ecr:BatchCheckLayerAvailability",
+            "ecr:PutImage",
 
-role_policy_processing_image_build = [
-    _iam.PolicyStatement(
-        actions=[
-            "cloudformation:DescribeStackEvents",
-            "cloudformation:GetTemplate",
-            "cloudformation:CreateChangeSet",
-            "cloudformation:CreateStack",
-            "cloudformation:DescribeChangeSet",
-            "cloudformation:DeleteChangeSet",
-            "cloudformation:DeleteStack",
-            "cloudformation:DescribeStacks",
-            "cloudformation:ExecuteChangeSet",
-            "cloudformation:SetStackPolicy",
-            "cloudformation:UpdateStack",
         ],
         resources=[
-            "arn:aws:cloudformation:*:*:stack/*",
+            "arn:aws:ecr:*:*:repository/sagemaker-*",
+            "arn:aws:ecr:*:*:repository/cdk-*",
         ],
     ),
     _iam.PolicyStatement(
         actions=[
-            "iam:GetRole",
-            "iam:GetRolePolicy",
-            "iam:CreateRole",
-            "iam:DetachRolePolicy",
-            "iam:AttachRolePolicy",
-            "iam:DeleteRole",
-            "iam:PutRolePolicy",
-            "iam:DeleteRolePolicy",
-            "iam:PassRole",
-            "iam:CreatePolicy",
+            "ecr:BatchGetImage",
+            "ecr:Describe*",
+            "ecr:GetDownloadUrlForLayer",
         ],
         resources=[
-            "arn:aws:iam::*:role/*",
-            "arn:aws:iam::*:policy/*",
+            "arn:aws:ecr:*:*:repository/*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "ecr:GetAuthorizationToken",
+        ],
+        resources=[
+            "*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "sagemaker:CreateImageVersion",
+        ],
+        resources=[
+            "arn:aws:sagemaker:*:*:image/sagemaker-*-imagebuild",
         ],
     ),
 ]

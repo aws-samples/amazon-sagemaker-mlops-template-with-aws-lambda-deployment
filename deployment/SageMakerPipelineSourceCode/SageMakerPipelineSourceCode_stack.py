@@ -14,8 +14,7 @@ from aws_cdk import aws_s3_deployment as _s3_deploy
 from aws_cdk import aws_sagemaker as _sagemaker
 from constructs import Construct
 
-from .role_policy import role_policy_training_image_build
-from .role_policy import role_policy_processing_image_build
+from .role_policy import role_policy_ecr_image_build
 from .role_policy import role_policy_model_build
 from .role_policy import role_policy_model_deploy
 
@@ -45,9 +44,9 @@ class SageMakerPipelineSourceCodeStack(Stack):
         """
         # Create the policy document
         self.mlops_training_image_build_policy = _iam.PolicyDocument(
-            statements=role_policy_training_image_build)
+            statements=role_policy_ecr_image_build)
         self.mlops_processing_image_build_policy = _iam.PolicyDocument(
-            statements=role_policy_processing_image_build)
+            statements=role_policy_ecr_image_build)
         self.mlops_model_build_policy = _iam.PolicyDocument(
             statements=role_policy_model_build)
         self.mlops_model_deploy_policy = _iam.PolicyDocument(
