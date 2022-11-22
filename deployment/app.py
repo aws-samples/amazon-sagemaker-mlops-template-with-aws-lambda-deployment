@@ -3,8 +3,8 @@
 import os
 import random
 import string
-
 import aws_cdk as _cdk
+import cdk_nag as cdknag
 import boto3
 from SageMakerPipelineSourceCode.SageMakerPipelineSourceCode_stack import \
     SageMakerPipelineSourceCodeStack
@@ -33,5 +33,5 @@ SageMakerPipelineSourceCodeStack(
     aws_account_id=aws_account_id,
     aws_region=aws_region,
     container_image_tag="latest")
-
+_cdk.Aspects.of(app).add(cdknag.AwsSolutionsChecks())
 app.synth()

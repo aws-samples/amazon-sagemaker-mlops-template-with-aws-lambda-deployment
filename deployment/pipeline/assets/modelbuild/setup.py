@@ -1,12 +1,7 @@
 import os
 
 import setuptools
-
-about = {}
-here = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(here, "pipelines", "__version__.py")) as f:
-    exec(f.read(), about)
-
+from pipelines import __version__ as version
 
 with open("README.md", "r") as f:
     readme = f.read()
@@ -44,15 +39,15 @@ extras = {
     ]
 }
 setuptools.setup(
-    name=about["__title__"],
-    description=about["__description__"],
-    version=about["__version__"],
-    author=about["__author__"],
-    author_email=["__author_email__"],
+    name=version.__title__,
+    description=version.__description__,
+    version=version.__version__,
+    author=version.__author__,
+    author_email=version.__author_email__,
     long_description=readme,
     long_description_content_type="text/markdown",
-    url=about["__url__"],
-    license=about["__license__"],
+    url=version.__url__,
+    license=version.__license__,
     packages=setuptools.find_packages(),
     include_package_data=True,
     python_requires=">=3.6",

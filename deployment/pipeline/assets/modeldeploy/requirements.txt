@@ -2,3 +2,5 @@ aws-cdk-lib==2.8.0
 constructs>=10.0.0,<11.0.0
 pytest==6.2.5
 boto3
+wheel
+cdk-nag==2.14.6

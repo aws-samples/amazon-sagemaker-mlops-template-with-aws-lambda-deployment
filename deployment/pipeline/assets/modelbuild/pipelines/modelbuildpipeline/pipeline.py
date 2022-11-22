@@ -14,7 +14,6 @@ import os
 
 import boto3
 import sagemaker
-import sagemaker.session
 from botocore.exceptions import ClientError
 from sagemaker.estimator import Estimator
 from sagemaker.inputs import TrainingInput
@@ -33,6 +32,7 @@ from sagemaker.workflow.pipeline import Pipeline
 from sagemaker.workflow.properties import PropertyFile
 from sagemaker.workflow.step_collections import RegisterModel
 from sagemaker.workflow.steps import ProcessingStep, TrainingStep
+from sagemaker.workflow.pipeline_context import PipelineSession
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -110,25 +110,22 @@ def create_lambda_role(role_name):
         return response["Role"]["Arn"]
 
 
-def get_session(region, default_bucket):
-    """Gets the sagemaker session based on the region.
+def get_pipeline_session(region, default_bucket):
 
+    """Gets the sagemaker pipeline session based on the region.
     Args:
         region: the aws region to start the session
         default_bucket: the bucket to use for storing the artifacts
 
     Returns:
-        `sagemaker.session.Session instance
+        `sagemaker.workflow.pipeline_context.PipelineSession instance
     """
-
     boto_session = boto3.Session(region_name=region)
 
     sagemaker_client = boto_session.client("sagemaker")
-    runtime_client = boto_session.client("sagemaker-runtime")
-    return sagemaker.session.Session(
+    return sagemaker.workflow.pipeline_context.PipelineSession(
         boto_session=boto_session,
         sagemaker_client=sagemaker_client,
-        sagemaker_runtime_client=runtime_client,
         default_bucket=default_bucket,
     )
 
@@ -223,10 +220,10 @@ def get_pipeline(
     Returns:
         an instance of a pipeline
     """
-    sagemaker_session = get_session(region, default_bucket)
+    pipeline_session = get_pipeline_session(region, default_bucket)
     lambda_role = create_lambda_role("lambda-update-manifest-role")
     if role is None:
-        role = sagemaker.session.get_execution_role(sagemaker_session)
+        role = sagemaker.session.get_execution_role(pipeline_session)
 
     # parameters for pipeline execution
     processing_instance_count = ParameterInteger(
@@ -251,11 +248,11 @@ def get_pipeline(
     # processing step for feature engineering
     try:
         processing_image_uri = (
-            sagemaker_session.sagemaker_client.describe_image_version(
+            pipeline_session.sagemaker_client.describe_image_version(
                 ImageName=processing_image_name
             )["ContainerImage"]
         )
-    except (sagemaker_session.sagemaker_client.exceptions.ResourceNotFound):
+    except (pipeline_session.sagemaker_client.exceptions.ResourceNotFound):
         processing_image_uri = sagemaker.image_uris.retrieve(
             framework="xgboost",
             region=region,
@@ -269,30 +266,32 @@ def get_pipeline(
         instance_count=processing_instance_count,
         base_job_name=f"{base_job_prefix}/EnergyMgt-preprocess",
         command=["python3"],
-        sagemaker_session=sagemaker_session,
+        sagemaker_session=pipeline_session,
         role=role,
         volume_size_in_gb=100,
     )
-    step_process = ProcessingStep(
-        name="PreprocessEnergyMgtData",
-        processor=script_processor,
+    processing_args = script_processor.run(
         outputs=[
             ProcessingOutput(output_name="train", source="/opt/ml/processing/train"),
         ],
         code=os.path.join(BASE_DIR, "preprocess.py"),
-        job_arguments=["--bucket-name", default_bucket],
+        arguments=["--bucket-name", default_bucket],
+    )
+    step_process = ProcessingStep(
+        name="PreprocessEnergyMgtData",
+        step_args=processing_args
     )
 
     # training step for generating model artifacts
     model_path = (
-        f"s3://{sagemaker_session.default_bucket()}/{base_job_prefix}/EnergyMgtTrain"
+        f"s3://{pipeline_session.default_bucket()}/{base_job_prefix}/EnergyMgtTrain"
     )
 
     try:
-        training_image_uri = sagemaker_session.sagemaker_client.describe_image_version(
+        training_image_uri = pipeline_session.sagemaker_client.describe_image_version(
             ImageName=training_image_name
         )["ContainerImage"]
-    except (sagemaker_session.sagemaker_client.exceptions.ResourceNotFound):
+    except (pipeline_session.sagemaker_client.exceptions.ResourceNotFound):
         training_image_uri = sagemaker.image_uris.retrieve(
             framework="xgboost",
             region=region,
@@ -307,7 +306,7 @@ def get_pipeline(
         instance_count=1,
         output_path=model_path,
         base_job_name=f"{base_job_prefix}/EnergyMgt-train",
-        sagemaker_session=sagemaker_session,
+        sagemaker_session=pipeline_session,
         role=role,
         enable_sagemaker_metrics=True,
         metric_definitions=[
@@ -341,24 +340,24 @@ def get_pipeline(
         verbose=1, dual_model=False, optimizer="adam", optimizer__learning_rate=0.001,
         epochs=2000
     )
+    train_args = xgb_train.fit({
+        "train": TrainingInput(
+            s3_data=step_process.properties.ProcessingOutputConfig.Outputs[
+                "train"
+            ].S3Output.S3Uri,
+            content_type="text/csv",
+        ),
+     })
     step_train = TrainingStep(
         name="TrainEnergyMgtModel",
-        estimator=xgb_train,
-        inputs={
-            "train": TrainingInput(
-                s3_data=step_process.properties.ProcessingOutputConfig.Outputs[
-                    "train"
-                ].S3Output.S3Uri,
-                content_type="text/csv",
-            ),
-        },
+        step_args=train_args
     )
 
     try:
-        inference_image_uri = sagemaker_session.sagemaker_client.describe_image_version(
+        inference_image_uri = pipeline_session.sagemaker_client.describe_image_version(
             ImageName=inference_image_name
         )["ContainerImage"]
-    except (sagemaker_session.sagemaker_client.exceptions.ResourceNotFound):
+    except (pipeline_session.sagemaker_client.exceptions.ResourceNotFound):
         inference_image_uri = sagemaker.image_uris.retrieve(
             framework="xgboost",
             region=region,
@@ -373,18 +372,20 @@ def get_pipeline(
         instance_count=processing_instance_count,
         base_job_name=f"{base_job_prefix}/EnergyMgt-simulate",
         command=["python3"],
-        sagemaker_session=sagemaker_session,
+        sagemaker_session=pipeline_session,
         role=role,
         volume_size_in_gb=10,
     )
-    simulate_step = ProcessingStep(
-        name="SimulateEnergyMgtData",
-        processor=simulate_processor,
+    inference_args = simulate_processor.run(
         outputs=[
             ProcessingOutput(output_name="train", source="/opt/ml/processing/train"),
         ],
         code=os.path.join(BASE_DIR, "simulate.py"),
-        job_arguments=["--model-artefact", step_train.properties.ModelArtifacts.S3ModelArtifacts],
+        arguments=["--model-artefact", step_train.properties.ModelArtifacts.S3ModelArtifacts]
+    )
+    simulate_step = ProcessingStep(
+        name="SimulateEnergyMgtData",
+        step_args=inference_args,
         depends_on=[step_train],
     )
 
@@ -435,6 +436,6 @@ def get_pipeline(
             model_approval_status,
         ],
         steps=[step_process, step_train, simulate_step, step_put_manifest, step_register],
-        sagemaker_session=sagemaker_session,
+        sagemaker_session=pipeline_session,
     )
     return pipeline
