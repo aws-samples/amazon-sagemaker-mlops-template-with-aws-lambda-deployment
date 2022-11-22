@@ -167,7 +167,9 @@ class SageMakerPipelineSourceCodeStack(Stack):
             "MlOpsArtifactsBucket",
             bucket_name=f"sagemaker-project-{self.sagemaker_project_id}",
             server_access_logs_prefix="access-logging",
-            encryption=_s3.BucketEncryption.S3_MANAGED)
+            encryption=_s3.BucketEncryption.S3_MANAGED,
+            block_public_access=_s3.BlockPublicAccess.BLOCK_ALL,
+            enforce_ssl=True)
 
     def create_codecommit_repository(
         self,

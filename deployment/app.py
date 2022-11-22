@@ -22,7 +22,7 @@ aws_region = boto3.session.Session().region_name
 aws_account_id = boto3.client('sts').get_caller_identity().get('Account')
 project_id = get_random_string(12)
 
-SageMakerPipelineSourceCodeStack(
+stack = SageMakerPipelineSourceCodeStack(
     app,
     "EnergyOptimization",
     sagemaker_project_name="enopt-project-cdk",
@@ -34,4 +34,35 @@ SageMakerPipelineSourceCodeStack(
     aws_region=aws_region,
     container_image_tag="latest")
 _cdk.Aspects.of(app).add(cdknag.AwsSolutionsChecks())
+
+
+cdknag.NagSuppressions.add_stack_suppressions(
+    stack,
+    [
+        cdknag.NagPackSuppression(
+            id="AwsSolutions-IAM4",
+            reason="Use AWS managed poclicies AWSLambdaBasicExecutionRole",
+        )
+    ],
+)
+
+cdknag.NagSuppressions.add_stack_suppressions(
+    stack,
+    [
+        cdknag.NagPackSuppression(
+            id="AwsSolutions-IAM5",
+            reason="Use AWS managed poclicies CodeBuild Project with defaults from cdk",
+        )
+    ],
+)
+
+cdknag.NagSuppressions.add_stack_suppressions(
+    stack,
+    [
+        cdknag.NagPackSuppression(
+            id="AwsSolutions-CB4",
+            reason="Use AWS managed poclicies CodeBuild Project with defaults from cdk",
+        )
+    ],
+)
 app.synth()
