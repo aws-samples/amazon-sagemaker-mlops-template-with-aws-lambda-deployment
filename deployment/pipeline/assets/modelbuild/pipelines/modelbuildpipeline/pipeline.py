@@ -379,6 +379,8 @@ def get_pipeline(
         sagemaker_session=pipeline_session,
         role=role,
         volume_size_in_gb=10,
+        network_config=sagemaker.network.NetworkConfig(enable_network_isolation=True)
+
     )
     inference_args = simulate_processor.run(
         outputs=[

@@ -12,7 +12,7 @@ import boto3
 import joblib
 import numpy as np
 import pandas as pd
-#from digital_twin import DigitalTwin
+from digital_twin import DigitalTwin
 
 sys.path.append("/opt/ml/code/")
 
