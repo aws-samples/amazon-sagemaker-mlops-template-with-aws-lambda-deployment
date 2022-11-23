@@ -12,6 +12,7 @@ import boto3
 import joblib
 import numpy as np
 import pandas as pd
+from quantile_regression import QuantileRegression
 from digital_twin import DigitalTwin
 
 sys.path.append("/opt/ml/code/")
@@ -20,7 +21,6 @@ sys.path.append("/opt/ml/code/")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
-
 s3 = boto3.client("s3")
 
 clf = [

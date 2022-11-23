@@ -173,8 +173,20 @@ role_policy_sagemaker_pipeline_execution = [
         ],
         resources=[
             "arn:aws:sagemaker:*:*:image/sagemaker-*-imagebuild*",
+            "arn:aws:sagemaker:*:*:image-version/*/*"
         ],
     ),
+    _iam.PolicyStatement(
+        actions=[
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+        ],
+        resources=[
+            "arn:aws:logs:*",
+        ],
+    ),
+
 ]
 
 
