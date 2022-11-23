@@ -335,7 +335,7 @@ def get_pipeline(
             {'Name': 'keras_train_c2c3:mae', 'Regex': 'Train_c2c3_keras_mae=(.*?);'},
         ],
         enable_network_isolation=True,
-        profiler_config=False
+        disable_profiler=True
 
     )
 

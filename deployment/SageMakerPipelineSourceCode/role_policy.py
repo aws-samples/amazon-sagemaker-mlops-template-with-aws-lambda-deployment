@@ -108,6 +108,74 @@ role_policy_model_build = [
         ],
     ),
 ]
+role_policy_sagemaker_pipeline_execution = [
+    _iam.PolicyStatement(
+        actions=[
+            "sagemaker:CreateProcessingJob",
+            "sagemaker:StopProcessingJob",
+            "sagemaker:DescribeProcessingJob",
+            "sagemaker:CreateTrainingJob",
+            "sagemaker:StopTrainingJob",
+            "sagemaker:DescribeTrainingJob",
+            "sagemaker:CreateArtifact",
+            "sagemaker:AddTags"
+
+        ],
+        resources=[
+            "arn:aws:sagemaker:*:*:processing-job/pipelines-*",
+            "arn:aws:sagemaker:*:*:training-job/pipelines-*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "s3:GetObject",
+            "s3:ListBucket",
+            "s3:PutObject",
+            "s3:DeleteObject",
+            "s3:AbortMultipartUpload"
+
+        ],
+        resources=[
+            "arn:aws:s3:::*sagemaker*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "ecr:BatchGetImage",
+            "ecr:Describe*",
+            "ecr:GetDownloadUrlForLayer",
+        ],
+        resources=[
+            "arn:aws:ecr:*:*:repository/sagemaker-*",
+            "arn:aws:ecr:*:*:repository/cdk-*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "ecr:GetAuthorizationToken",
+        ],
+        resources=[
+            "*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "iam:PassRole",
+        ],
+        resources=[
+            "arn:aws:iam::*:role/*",
+            "arn:aws:iam::*:policy/*",
+        ],
+    ),
+    _iam.PolicyStatement(
+        actions=[
+            "sagemaker:DescribeImageVersion",
+        ],
+        resources=[
+            "arn:aws:sagemaker:*:*:image/sagemaker-*-imagebuild*",
+        ],
+    ),
+]
 
 
 role_policy_model_deploy = [

@@ -58,6 +58,7 @@ copy_pipeline_files () {
     echo "Copy Python files to model building repo"
     cp mllib/preprocess.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/simulate.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
+    cp mllib/digital_twin.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/lambda_handler.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
 }
 
