@@ -401,7 +401,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             "ModelDeployBuildProject",
             description="Builds the Cfn template which defines the Endpoint with specified configuration",
             project_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-modeldeploy",
-            role=self.mlops_model_build_role,
+            role=self.mlops_model_deploy_role,
             environment=_codebuild.BuildEnvironment(
                 build_image=_codebuild.LinuxBuildImage.from_code_build_image_id(id="aws/codebuild/amazonlinux2-x86_64-standard:4.0"),
                 compute_type=_codebuild.ComputeType.SMALL,
@@ -411,7 +411,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 "SAGEMAKER_PROJECT_NAME": _codebuild.BuildEnvironmentVariable(value=self.sagemaker_project_name),
                 "SAGEMAKER_PROJECT_ID": _codebuild.BuildEnvironmentVariable(value=self.sagemaker_project_id),
                 "ARTIFACT_BUCKET": _codebuild.BuildEnvironmentVariable(value=self.mlops_artifacts_bucket.bucket_name),
-                "MODEL_EXECUTION_ROLE_ARN": _codebuild.BuildEnvironmentVariable(value=self.mlops_model_build_role.role_arn),
+                "MODEL_EXECUTION_ROLE_ARN": _codebuild.BuildEnvironmentVariable(value=self.mlops_model_deploy_role.role_arn),
                 "SOURCE_MODEL_PACKAGE_GROUP_NAME": _codebuild.BuildEnvironmentVariable(value=f"{self.sagemaker_project_name}-{self.sagemaker_project_id}"),
                 "AWS_REGION": _codebuild.BuildEnvironmentVariable(value=self.aws_region),
                 "EXPORT_TEMPLATE_NAME": _codebuild.BuildEnvironmentVariable(value="template-export.yml"),

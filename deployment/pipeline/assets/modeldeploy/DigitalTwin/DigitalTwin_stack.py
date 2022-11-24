@@ -30,6 +30,7 @@ class DigitalTwinStack(Stack):
         _lambda.DockerImageFunction(
             self, 'DigitalTwin',
             code=_lambda.DockerImageCode.from_image_asset("lambda/digital_twin"),
-            memory_size=512,
+            memory_size=1024,
+            ephemeral_storage_size=1024,
             timeout=Duration.seconds(60),
         )
