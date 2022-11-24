@@ -123,6 +123,6 @@ echo "Bootstrap account"
 cdk bootstrap
 
 echo "Deploy CDK Stack..."
-cdk deploy --require-approval never
-
+#cdk deploy --require-approval never
+cdk synth
 cleanup_files
