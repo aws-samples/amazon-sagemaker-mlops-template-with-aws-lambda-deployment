@@ -58,6 +58,7 @@ copy_pipeline_files () {
     echo "Copy Python files to model building repo"
     cp mllib/preprocess.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/simulate.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
+    cp mllib/digital_twin.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/lambda_handler.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
 }
 
@@ -123,6 +124,6 @@ echo "Bootstrap account"
 cdk bootstrap
 
 echo "Deploy CDK Stack..."
-#cdk deploy --require-approval never
-cdk synth
+cdk deploy --require-approval never
+
 cleanup_files

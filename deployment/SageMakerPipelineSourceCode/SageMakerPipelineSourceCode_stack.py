@@ -17,7 +17,7 @@ from constructs import Construct
 from .role_policy import role_policy_ecr_image_build
 from .role_policy import role_policy_model_build
 from .role_policy import role_policy_model_deploy
-
+from .role_policy import role_policy_sagemaker_pipeline_execution 
 
 class SageMakerPipelineSourceCodeStack(Stack):
     """SageMakerPipelineSourceCodeStack class to deploy the AWS CDK stack.
@@ -51,7 +51,8 @@ class SageMakerPipelineSourceCodeStack(Stack):
             statements=role_policy_model_build)
         self.mlops_model_deploy_policy = _iam.PolicyDocument(
             statements=role_policy_model_deploy)
-
+        self.mlops_sagemaker_pipeline_policy = _iam.PolicyDocument(
+            statements=role_policy_sagemaker_pipeline_execution)
         # Define the IAM role
         self.mlops_training_image_build_role = _iam.Role(
             self,
@@ -100,8 +101,11 @@ class SageMakerPipelineSourceCodeStack(Stack):
             assumed_by=_iam.ServicePrincipal("sagemaker.amazonaws.com"),
             description="The SageMakerPipelineRole for executing pipeline .",
             managed_policies=[
-                _iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerFullAccess")
-            ]
+                _iam.ManagedPolicy.from_aws_managed_policy_name("AmazonSageMakerPipelinesIntegrations")
+            ],
+            inline_policies={
+                "SageMakerMLOpsSagemkerPipelinePolicy": self.mlops_sagemaker_pipeline_policy,
+            },
         )
         # Add more service principals the IAM role can assume
         self.mlops_training_image_build_role.assume_role_policy.add_statements(
@@ -111,7 +115,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 principals=[
                     _iam.ServicePrincipal("events.amazonaws.com"),
                     _iam.ServicePrincipal("states.amazonaws.com"),
-                    _iam.ServicePrincipal("cloudformation.amazonaws.com"),
                     _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))
@@ -122,7 +125,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 principals=[
                     _iam.ServicePrincipal("events.amazonaws.com"),
                     _iam.ServicePrincipal("states.amazonaws.com"),
-                    _iam.ServicePrincipal("cloudformation.amazonaws.com"),
                     _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))        
@@ -146,7 +148,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                     _iam.ServicePrincipal("states.amazonaws.com"),
                     _iam.ServicePrincipal("lambda.amazonaws.com"),
                     _iam.ServicePrincipal("cloudformation.amazonaws.com"),
-                    _iam.ServicePrincipal("apigateway.amazonaws.com"),
                     _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))
@@ -156,6 +157,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 effect=_iam.Effect.ALLOW,
                 principals=[
                     _iam.ServicePrincipal("sagemaker.amazonaws.com"),
+                   #_iam.ServicePrincipal("states.amazonaws.com"),
                 ]))
 
     def create_s3_artifact_bucket(self, **kwargs) -> _s3.Bucket:
@@ -399,7 +401,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             "ModelDeployBuildProject",
             description="Builds the Cfn template which defines the Endpoint with specified configuration",
             project_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-modeldeploy",
-            role=self.mlops_model_build_role,
+            role=self.mlops_model_deploy_role,
             environment=_codebuild.BuildEnvironment(
                 build_image=_codebuild.LinuxBuildImage.from_code_build_image_id(id="aws/codebuild/amazonlinux2-x86_64-standard:4.0"),
                 compute_type=_codebuild.ComputeType.SMALL,
@@ -409,7 +411,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 "SAGEMAKER_PROJECT_NAME": _codebuild.BuildEnvironmentVariable(value=self.sagemaker_project_name),
                 "SAGEMAKER_PROJECT_ID": _codebuild.BuildEnvironmentVariable(value=self.sagemaker_project_id),
                 "ARTIFACT_BUCKET": _codebuild.BuildEnvironmentVariable(value=self.mlops_artifacts_bucket.bucket_name),
-                "MODEL_EXECUTION_ROLE_ARN": _codebuild.BuildEnvironmentVariable(value=self.mlops_model_build_role.role_arn),
+                "MODEL_EXECUTION_ROLE_ARN": _codebuild.BuildEnvironmentVariable(value=self.mlops_model_deploy_role.role_arn),
                 "SOURCE_MODEL_PACKAGE_GROUP_NAME": _codebuild.BuildEnvironmentVariable(value=f"{self.sagemaker_project_name}-{self.sagemaker_project_id}"),
                 "AWS_REGION": _codebuild.BuildEnvironmentVariable(value=self.aws_region),
                 "EXPORT_TEMPLATE_NAME": _codebuild.BuildEnvironmentVariable(value="template-export.yml"),

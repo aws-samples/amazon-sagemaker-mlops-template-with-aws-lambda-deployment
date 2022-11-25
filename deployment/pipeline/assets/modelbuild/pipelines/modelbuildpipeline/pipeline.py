@@ -269,6 +269,7 @@ def get_pipeline(
         sagemaker_session=pipeline_session,
         role=role,
         volume_size_in_gb=100,
+        network_config=sagemaker.network.NetworkConfig(enable_network_isolation=True)
     )
     processing_args = script_processor.run(
         outputs=[
@@ -333,6 +334,9 @@ def get_pipeline(
             {'Name': 'keras_train_c2c4:mae', 'Regex': 'Train_c2c4_keras_mae=(.*?);'},
             {'Name': 'keras_train_c2c3:mae', 'Regex': 'Train_c2c3_keras_mae=(.*?);'},
         ],
+        enable_network_isolation=True,
+        disable_profiler=True
+
     )
 
     xgb_train.set_hyperparameters(
@@ -375,6 +379,8 @@ def get_pipeline(
         sagemaker_session=pipeline_session,
         role=role,
         volume_size_in_gb=10,
+        network_config=sagemaker.network.NetworkConfig(enable_network_isolation=True)
+
     )
     inference_args = simulate_processor.run(
         outputs=[
