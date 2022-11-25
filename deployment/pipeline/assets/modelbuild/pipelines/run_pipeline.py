@@ -90,7 +90,7 @@ def main():  # pragma: no cover
         print(f"\n###### Execution started with PipelineExecutionArn: {execution.arn}")
 
         print("Waiting for the execution to finish...")
-        execution.wait()
+        execution.wait(delay=60, max_attempts=120)
         print("\n#####Execution completed. Execution step details:")
 
         print(execution.list_steps())
