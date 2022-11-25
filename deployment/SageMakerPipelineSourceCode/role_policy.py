@@ -151,7 +151,8 @@ role_policy_sagemaker_pipeline_execution = [
             "sagemaker:AddTags",
             "sagemaker:DescribeModelPackage",
             "sagemaker:CreateModelPackage",
-            "sagemaker:DescribeModelPackageGroup",        
+            "sagemaker:DescribeModelPackageGroup",   
+            "sagemaker:CreateModelPackageGroup",
             "sagemaker:DescribeImageVersion",
         ],
         resources=[
@@ -193,7 +194,6 @@ role_policy_sagemaker_pipeline_execution = [
             "logs:PutLogEvents"
         ],
         resources=[
-            "arn:aws:logs:*",
             "arn:aws:logs:*:*:log-group:*",
             "arn:aws:logs:*:*:log-group:*:log-stream:*",
         ],
