@@ -113,9 +113,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 actions=["sts:AssumeRole"],
                 effect=_iam.Effect.ALLOW,
                 principals=[
-                    _iam.ServicePrincipal("events.amazonaws.com"),
-                    _iam.ServicePrincipal("states.amazonaws.com"),
-                    _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))
         self.mlops_processing_image_build_role.assume_role_policy.add_statements(
@@ -123,9 +120,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 actions=["sts:AssumeRole"],
                 effect=_iam.Effect.ALLOW,
                 principals=[
-                    _iam.ServicePrincipal("events.amazonaws.com"),
-                    _iam.ServicePrincipal("states.amazonaws.com"),
-                    _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))        
         self.mlops_model_build_role.assume_role_policy.add_statements(
@@ -133,10 +127,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 actions=["sts:AssumeRole"],
                 effect=_iam.Effect.ALLOW,
                 principals=[
-                    _iam.ServicePrincipal("events.amazonaws.com"),
-                    _iam.ServicePrincipal("states.amazonaws.com"),
-                    _iam.ServicePrincipal("cloudformation.amazonaws.com"),
-                    _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))
         self.mlops_model_deploy_role.assume_role_policy.add_statements(
@@ -144,11 +134,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 actions=["sts:AssumeRole"],
                 effect=_iam.Effect.ALLOW,
                 principals=[
-                    _iam.ServicePrincipal("events.amazonaws.com"),
-                    _iam.ServicePrincipal("states.amazonaws.com"),
-                    _iam.ServicePrincipal("lambda.amazonaws.com"),
-                    _iam.ServicePrincipal("cloudformation.amazonaws.com"),
-                    _iam.ServicePrincipal("codepipeline.amazonaws.com"),
                     _iam.ServicePrincipal("codebuild.amazonaws.com"),
                 ]))
         self.mlops_sagemaker_pipeline_role.assume_role_policy.add_statements(
@@ -157,7 +142,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 effect=_iam.Effect.ALLOW,
                 principals=[
                     _iam.ServicePrincipal("sagemaker.amazonaws.com"),
-                   #_iam.ServicePrincipal("states.amazonaws.com"),
                 ]))
 
     def create_s3_artifact_bucket(self, **kwargs) -> _s3.Bucket:
@@ -347,7 +331,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
             self,
             "ModelBuildPipeline",
             pipeline_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-modelbuild",
-            role=self.mlops_model_build_role,
             artifact_bucket=self.mlops_artifacts_bucket,)
 
         # Define actions that are executed in CodePipeline:
@@ -426,7 +409,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
             self,
             "ModelDeployPipeline",
             pipeline_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-modeldeploy",
-            role=self.mlops_model_deploy_role,
             artifact_bucket=self.mlops_artifacts_bucket,)
 
         # Define actions that are executed in CodePipeline:
