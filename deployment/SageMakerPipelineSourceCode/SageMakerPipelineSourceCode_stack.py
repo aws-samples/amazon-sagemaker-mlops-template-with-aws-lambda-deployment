@@ -504,7 +504,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             f"ImageBuildProject-{image_type}",
             project_name=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-{image_type}-imagebuild",
             description=f"sagemaker-{self.sagemaker_project_name}-{self.sagemaker_project_id}-{image_type}-imagebuild",
-            role=image_build_role,
+#           role=image_build_role,
             environment=_codebuild.BuildEnvironment(
                 build_image=_codebuild.LinuxBuildImage.from_code_build_image_id(id="aws/codebuild/amazonlinux2-x86_64-standard:4.0"),
                 compute_type=_codebuild.ComputeType.SMALL,
@@ -519,6 +519,8 @@ class SageMakerPipelineSourceCodeStack(Stack):
             source=_codebuild.Source.code_commit(repository=image_build_repository),
             timeout=Duration.hours(2),)
 
+        #grant the default CodeBuild role with access to pull and push ecr images to ecr repo
+        training_ecr_repo.grant_pull_push(image_build_project.role)
         # Defines the AWS CodePipeline
         image_build_pipeline = _codepipeline.Pipeline(
             self,
