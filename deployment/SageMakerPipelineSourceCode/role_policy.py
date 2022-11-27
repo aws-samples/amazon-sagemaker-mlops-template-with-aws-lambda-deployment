@@ -1,56 +1,18 @@
 from aws_cdk import aws_iam as _iam
 
-role_policy_ecr_image_build = [
-    # _iam.PolicyStatement(
-    #     actions=[
-    #         "iam:GetRole",
-    #         "iam:GetRolePolicy",
-    #         "iam:CreateRole",
-    #         "iam:DetachRolePolicy",
-    #         "iam:AttachRolePolicy",
-    #         "iam:DeleteRole",
-    #         "iam:PutRolePolicy",
-    #         "iam:DeleteRolePolicy",
-    #         "iam:PassRole",
-    #         "iam:CreatePolicy",
-    #     ],
-    #     resources=[
-    #         "arn:aws:iam::*:role/*",
-    #         "arn:aws:iam::*:policy/*",
-    #     ],
-    # ),
+role_policy_public_ecr = [
     _iam.PolicyStatement(
         actions=[
-            "ecr:CompleteLayerUpload",
-            "ecr:UploadLayerPart",
-            "ecr:InitiateLayerUpload",
-            "ecr:BatchCheckLayerAvailability",
-            "ecr:PutImage",
+            "ecr:BatchGetImage",
+            "ecr:Describe*",
+            "ecr:GetDownloadUrlForLayer",
 
         ],
         resources=[
             "arn:aws:ecr:*:*:repository/sagemaker-*",
             "arn:aws:ecr:*:*:repository/cdk-*",
         ],
-    ),
-    _iam.PolicyStatement(
-        actions=[
-            "ecr:BatchGetImage",
-            "ecr:Describe*",
-            "ecr:GetDownloadUrlForLayer",
-        ],
-        resources=[
-            "arn:aws:ecr:*:*:repository/sagemaker-*",
-            "arn:aws:ecr:*:*:repository/cdk-*",
-        ],
-    ),
-    _iam.PolicyStatement(
-        actions=[
-            "ecr:GetAuthorizationToken",
-        ],
-        resources=[
-            "*",
-        ],
+        
     ),
     _iam.PolicyStatement(
         actions=[
@@ -63,24 +25,24 @@ role_policy_ecr_image_build = [
 ]
 
 role_policy_model_build = [
-    # _iam.PolicyStatement(
-    #     actions=[
-    #         "iam:GetRole",
+    _iam.PolicyStatement(
+        actions=[
+             "iam:GetRole",
     #         "iam:GetRolePolicy",
-    #         "iam:CreateRole",
+             "iam:CreateRole",
     #         "iam:DetachRolePolicy",
     #         "iam:AttachRolePolicy",
     #         "iam:DeleteRole",
     #         "iam:PutRolePolicy",
     #         "iam:DeleteRolePolicy",
-    #         "iam:PassRole",
+             "iam:PassRole",
     #         "iam:CreatePolicy",
-    #     ],
-    #     resources=[
-    #         "arn:aws:iam::*:role/lambda-update-manifest-role",
-    #         "arn:aws:iam::*:role/EnergyOptimization-SageMakerMLOpsSagemakerPipeline*",
-    #     ],
-    # ),
+         ],
+         resources=[
+             "arn:aws:iam::*:role/lambda-update-manifest-role",
+             "arn:aws:iam::*:role/EnergyOptimization-SageMakerMLOpsSagemakerPipeline*",
+         ],
+     ),
     _iam.PolicyStatement(
         actions=[
             "sagemaker:DescribeImageVersion",
@@ -115,7 +77,7 @@ role_policy_sagemaker_pipeline_execution = [
                 "iam:PassRole"
         ],
         resources=[
-            # "arn:aws:iam::*:role/lambda-update-manifest-role",
+            "arn:aws:iam::*:role/lambda-update-manifest-role",
             "arn:aws:iam::*:role/EnergyOptimization-SageMakerMLOpsSagemakerPipeline*",
         ],
     ),
@@ -209,28 +171,28 @@ role_policy_model_deploy = [
             "arn:aws:cloudformation:*:*:stack/CDKToolkit/*",
         ],
     ),
-    # _iam.PolicyStatement(
-    #     actions=[
-    #         "iam:GetRole",
-    #         "iam:CreateRole",
-    #         "iam:DeleteRole",
-    #         "iam:AttachRolePolicy",
-    #         "iam:PutRolePolicy",
-    #         "iam:CreatePolicy",
-    #         "iam:DetachRolePolicy",
-    #         "iam:DeleteRolePolicy",
-    #         "iam:GetRolePolicy",
-    #         "iam:PassRole",
-    #         "sts:AssumeRole",
-    #         "ssm:GetParameter",
-    #     ],
-    #     resources=[
-    #         "arn:aws:iam::*:role/*deploy-role*",
-    #         "arn:aws:iam::*:role/*file-publishing*",
-    #         "arn:aws:iam::*:role/*image-publishing-role*",
-    #         "arn:aws:ssm:*:*:parameter/cdk-bootstrap*",
-    #     ],
-    # ),
+    _iam.PolicyStatement(
+        actions=[
+            # "iam:GetRole",
+            "iam:CreateRole",
+            # "iam:DeleteRole",
+            # "iam:AttachRolePolicy",
+            # "iam:PutRolePolicy",
+            # "iam:CreatePolicy",
+            # "iam:DetachRolePolicy",
+            # "iam:DeleteRolePolicy",
+            # "iam:GetRolePolicy",
+            "iam:PassRole",
+            "sts:AssumeRole",
+            "ssm:GetParameter",
+        ],
+        resources=[
+            "arn:aws:iam::*:role/*deploy-role*",
+            "arn:aws:iam::*:role/*file-publishing*",
+            "arn:aws:iam::*:role/*image-publishing-role*",
+            "arn:aws:ssm:*:*:parameter/cdk-bootstrap*",
+        ],
+    ),
     _iam.PolicyStatement(
         actions=[
             "sagemaker:ListTags",
