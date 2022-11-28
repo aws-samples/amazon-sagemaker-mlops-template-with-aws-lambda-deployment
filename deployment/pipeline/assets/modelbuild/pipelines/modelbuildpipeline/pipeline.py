@@ -383,11 +383,16 @@ def get_pipeline(
 
     )
     inference_args = simulate_processor.run(
+        inputs = [
+            ProcessingInput(
+                source=step_train.properties.ModelArtifacts.S3ModelArtifacts,
+                destination='/opt/ml/processing/input',
+                input_name="model.tar.gz")
+        ],
         outputs=[
             ProcessingOutput(output_name="train", source="/opt/ml/processing/train"),
         ],
         code=os.path.join(BASE_DIR, "simulate.py"),
-        arguments=["--model-artefact", step_train.properties.ModelArtifacts.S3ModelArtifacts]
     )
     simulate_step = ProcessingStep(
         name="SimulateEnergyMgtData",
