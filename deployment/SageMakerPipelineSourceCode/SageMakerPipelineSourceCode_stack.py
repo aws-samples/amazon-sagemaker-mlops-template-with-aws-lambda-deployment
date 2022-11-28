@@ -17,7 +17,7 @@ from constructs import Construct
 from .role_policy import role_policy_model_build
 from .role_policy import role_policy_model_deploy
 from .role_policy import role_policy_sagemaker_pipeline_execution 
-from .role_policy import role_policy_public_ecr
+from .role_policy import role_policy_ecr
 
 class SageMakerPipelineSourceCodeStack(Stack):
     """SageMakerPipelineSourceCodeStack class to deploy the AWS CDK stack.
@@ -104,6 +104,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 effect=_iam.Effect.ALLOW,
                 principals=[
                     _iam.ServicePrincipal("sagemaker.amazonaws.com"),
+                    _iam.ServicePrincipal("codebuild.amazonaws.com")
                 ]))
 
     def create_s3_artifact_bucket(self, **kwargs) -> _s3.Bucket:
@@ -475,7 +476,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
             self,
             f"IamPolicyImageBuildPublicECR-{image_type}",
             document=_iam.PolicyDocument(
-            statements=role_policy_public_ecr)))
+            statements=role_policy_ecr)))
                 # Create Amazon SageMaker Image
         sagemaker_image = _sagemaker.CfnImage(
             self,

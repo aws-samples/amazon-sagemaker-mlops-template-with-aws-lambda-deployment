@@ -1,6 +1,6 @@
 from aws_cdk import aws_iam as _iam
 
-role_policy_public_ecr = [
+role_policy_ecr = [
     _iam.PolicyStatement(
         actions=[
             "ecr:BatchGetImage",
@@ -17,6 +17,7 @@ role_policy_public_ecr = [
     _iam.PolicyStatement(
         actions=[
             "sagemaker:CreateImageVersion",
+            "sagemaker:DescribeImageVersion",
         ],
         resources=[
             "arn:aws:sagemaker:*:*:image/sagemaker-*-imagebuild",
@@ -121,14 +122,19 @@ role_policy_sagemaker_pipeline_execution = [
     ),
     _iam.PolicyStatement(
         actions=[
-            "s3:GetObject",
-            "s3:ListBucket",
+            "s3:GetObject*",
+            "s3:GetBucket*",
+            "s3:List*",
+            "s3:DeleteObject*",
             "s3:PutObject",
-            "s3:DeleteObject",
-            "s3:AbortMultipartUpload"
+            "s3:PutObjectLegalHold",
+            "s3:PutObjectRetention",
+            "s3:PutObjectTagging",
+            "s3:PutObjectVersionTagging",
+            "s3:Abort*"
         ],
         resources=[
-            "arn:aws:s3:::*sagemaker*",
+            "arn:aws:s3:::*sagemaker*/*",
         ],
     ),
     _iam.PolicyStatement(
