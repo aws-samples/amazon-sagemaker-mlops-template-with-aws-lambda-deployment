@@ -28,15 +28,8 @@ role_policy_model_build = [
     _iam.PolicyStatement(
         actions=[
              "iam:GetRole",
-    #         "iam:GetRolePolicy",
              "iam:CreateRole",
-    #         "iam:DetachRolePolicy",
-    #         "iam:AttachRolePolicy",
-    #         "iam:DeleteRole",
-    #         "iam:PutRolePolicy",
-    #         "iam:DeleteRolePolicy",
              "iam:PassRole",
-    #         "iam:CreatePolicy",
          ],
          resources=[
              "arn:aws:iam::*:role/lambda-update-manifest-role",
@@ -81,18 +74,14 @@ role_policy_sagemaker_pipeline_execution = [
             "arn:aws:iam::*:role/EnergyOptimization-SageMakerMLOpsSagemakerPipeline*",
         ],
     ),
-    # _iam.PolicyStatement(
-    #     actions=[
-    #             "lambda:CreateFunction",
-    #             "lambda:DeleteFunction",
-    #             "lambda:GetFunction",
-    #             "lambda:InvokeFunction",
-    #             "lambda:UpdateFunctionCode"
-    #     ],
-    #     resources=[
-    #         "arn:aws:lambda:*:*:function:lambda-update-manifest",
-    #     ]
-    # ),
+    _iam.PolicyStatement(
+        actions=[
+                "lambda:InvokeFunction",
+        ],
+        resources=[
+            "arn:aws:lambda:*:*:function:lambda-update-manifest",
+        ]
+    ),
      _iam.PolicyStatement(
         actions=[
             "ecr:GetAuthorizationToken",
@@ -174,7 +163,7 @@ role_policy_model_deploy = [
     _iam.PolicyStatement(
         actions=[
             # "iam:GetRole",
-            "iam:CreateRole",
+            #"iam:CreateRole",
             # "iam:DeleteRole",
             # "iam:AttachRolePolicy",
             # "iam:PutRolePolicy",
