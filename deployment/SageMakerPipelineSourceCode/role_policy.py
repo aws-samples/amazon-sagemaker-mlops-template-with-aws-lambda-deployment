@@ -30,6 +30,7 @@ role_policy_model_build = [
              "iam:GetRole",
              "iam:CreateRole",
              "iam:PassRole",
+             "sts:AssumeRole",
          ],
          resources=[
              "arn:aws:iam::*:role/lambda-update-manifest-role",
@@ -67,7 +68,7 @@ role_policy_model_build = [
 role_policy_sagemaker_pipeline_execution = [
     _iam.PolicyStatement(
         actions=[
-                "iam:PassRole"
+            "iam:PassRole"
         ],
         resources=[
             "arn:aws:iam::*:role/lambda-update-manifest-role",

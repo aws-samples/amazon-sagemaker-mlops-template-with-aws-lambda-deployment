@@ -60,6 +60,7 @@ copy_pipeline_files () {
     cp mllib/simulate.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/digital_twin.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/lambda_handler.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
+    cp mllib/quantile_regression.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
 }
 
 cleanup_repository () {
