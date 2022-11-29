@@ -6,22 +6,6 @@ from aws_cdk import aws_s3 as _s3
 from aws_cdk import Size
 from constructs import Construct
 
-policy = [
-    _iam.PolicyStatement(
-        actions=[
-            "s3:GetObject*",
-            "s3:GetBucket*",
-            "s3:List*",
-            "s3:DeleteObject*",
-            "s3:PutObject",
-            "s3:Abort*",
-        ],
-        resources=[
-            "arn:aws:s3:::sagemaker-*",
-        ],
-    ),
-]
-
 class DigitalTwinStack(Stack):
 
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
@@ -33,5 +17,5 @@ class DigitalTwinStack(Stack):
             code=_lambda.DockerImageCode.from_image_asset("lambda/digital_twin"),
             memory_size=1024,
             ephemeral_storage_size=Size.mebibytes(1024),
-            timeout=Duration.seconds(60),
+            timeout=Duration.seconds(120),
         )
