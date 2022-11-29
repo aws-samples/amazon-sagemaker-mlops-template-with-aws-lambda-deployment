@@ -104,7 +104,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 effect=_iam.Effect.ALLOW,
                 principals=[
                     _iam.ServicePrincipal("sagemaker.amazonaws.com"),
-                    _iam.ServicePrincipal("codebuild.amazonaws.com")
                 ]))
 
     def create_s3_artifact_bucket(self, **kwargs) -> _s3.Bucket:

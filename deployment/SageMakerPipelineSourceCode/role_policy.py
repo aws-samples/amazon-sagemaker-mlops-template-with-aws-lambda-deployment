@@ -47,12 +47,13 @@ role_policy_model_build = [
             "sagemaker:CreatePipeline",
             "sagemaker:StartPipelineExecution",
             "sagemaker:DescribePipelineExecution",
-            "sagemaker:UpdatePipeline"
+            "sagemaker:UpdatePipeline",
+            "sagemaker:ListPipelineExecutionSteps"
         ],
         resources=[
             "arn:aws:sagemaker:*:*:pipeline/enopt-project-cdk-*",
             "arn:aws:sagemaker:*:*:image/sagemaker-*-imagebuild*",
-            "arn:aws:sagemaker:*:*:image-version/*/*"
+            "arn:aws:sagemaker:*:*:image-version/*/*",
         ],
     ),
     _iam.PolicyStatement(
@@ -131,10 +132,9 @@ role_policy_sagemaker_pipeline_execution = [
             "s3:PutObjectRetention",
             "s3:PutObjectTagging",
             "s3:PutObjectVersionTagging",
-            "s3:Abort*"
         ],
         resources=[
-            "arn:aws:s3:::*sagemaker*/*",
+            "arn:aws:s3:::*sagemaker*",
         ],
     ),
     _iam.PolicyStatement(

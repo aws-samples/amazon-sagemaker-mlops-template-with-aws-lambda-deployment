@@ -61,7 +61,7 @@ cdknag.NagSuppressions.add_stack_suppressions(
     [
         cdknag.NagPackSuppression(
             id="AwsSolutions-CB4",
-            reason="Use AWS managed poclicies CodeBuild Project with defaults from cdk",
+            reason="S3 and Sagemaker Jobs are encrpyted",
         )
     ],
 )

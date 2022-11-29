@@ -6,8 +6,17 @@ from DigitalTwin.DigitalTwin_stack import DigitalTwinStack
 
 app = cdk.App()
 
-DigitalTwinStack(
+stack = DigitalTwinStack(
     app,
     "DigitalTwinStack")
 cdk.Aspects.of(app).add(cdknag.AwsSolutionsChecks())
+cdknag.NagSuppressions.add_stack_suppressions(
+    stack,
+    [
+        cdknag.NagPackSuppression(
+            id="AwsSolutions-IAM4",
+            reason="Use AWS managed poclicies AWSLambdaBasicExecutionRole",
+        )
+    ],
+)
 app.synth()
