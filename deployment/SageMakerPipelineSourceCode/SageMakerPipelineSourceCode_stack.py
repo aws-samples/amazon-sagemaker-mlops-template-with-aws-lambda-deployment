@@ -53,8 +53,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
         self.mlops_model_build_role = _iam.Role(
             self,
             "SageMakerMLOpsModelBuildRole",
-            #role_name="SageMakerMLOpsProductUseRole",
-            assumed_by=_iam.ServicePrincipal("sagemaker.amazonaws.com"),
             description="The SageMakerMLOpsModelBuildRole for service interactions.",
             inline_policies={
                 "SageMakerMLOpsModelBuildPolicy": self.mlops_model_build_policy,
@@ -63,8 +61,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
         self.mlops_model_deploy_role = _iam.Role(
             self,
             "SageMakerMLOpsModelDeployRole",
-            #role_name="SageMakerMLOpsProductUseRole",
-            assumed_by=_iam.ServicePrincipal("sagemaker.amazonaws.com"),
             description="The SageMakerMLOpsModelDeployRole for service interactions.",
             inline_policies={
                 "SageMakerMLOpsModelDeployPolicy": self.mlops_model_deploy_policy,
@@ -73,7 +69,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
         self.mlops_sagemaker_pipeline_role = _iam.Role(
             self,
             "SageMakerMLOpsSagemakerPipelineRole",
-            #role_name="SageMakerMLOpsEcrImageBuildRole",
             assumed_by=_iam.ServicePrincipal("sagemaker.amazonaws.com"),
             description="The SageMakerPipelineRole for executing pipeline .",
             managed_policies=[
