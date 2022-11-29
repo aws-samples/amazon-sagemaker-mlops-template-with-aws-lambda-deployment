@@ -9,7 +9,7 @@ setuptools.setup(
     package_dir={"": "SageMakerPipelineSourceCode"},
     packages=setuptools.find_packages(where="SageMakerPipelineSourceCode"),
     install_requires=[
-        "aws-cdk-lib==2.8.0",
+        "aws-cdk-lib==2.11.0",
         "constructs>=10.0.0,<11.0.0",
         "pytest==6.2.5",
         "boto3",

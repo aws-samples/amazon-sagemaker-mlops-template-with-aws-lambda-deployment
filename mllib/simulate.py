@@ -8,12 +8,9 @@ import sys
 import tarfile
 from datetime import datetime
 
-import boto3
 import joblib
 import numpy as np
 import pandas as pd
-from quantile_regression import QuantileRegression
-from digital_twin import DigitalTwin
 
 sys.path.append("/opt/ml/code/")
 
@@ -21,7 +18,6 @@ sys.path.append("/opt/ml/code/")
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 logger.addHandler(logging.StreamHandler())
-s3 = boto3.client("s3")
 
 clf = [
     "c1c2",
@@ -91,20 +87,12 @@ def extract_value(x):
 
 if __name__ == "__main__":
     logger.debug("Starting simulation.")
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model-artefact", type=str, required=True)
-    args = parser.parse_args()
 
     base_dir = "/opt/ml/processing"
     pathlib.Path(f"{base_dir}/data").mkdir(parents=True, exist_ok=True)
 
-    x = args.model_artefact
-    bucket = x.split("/")[2]
-    key = "/".join(x.split("/")[3:])
-    with open('model.tar.gz', 'wb') as f:
-        s3.download_fileobj(bucket, key, f)
 
-    tar = tarfile.open("model.tar.gz")
+    tar = tarfile.open("/opt/ml/processing/input/model.tar.gz")
     tar.extractall()
 
     twin = joblib.load("model.joblib")

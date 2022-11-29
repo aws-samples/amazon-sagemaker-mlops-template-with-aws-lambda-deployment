@@ -58,8 +58,9 @@ copy_pipeline_files () {
     echo "Copy Python files to model building repo"
     cp mllib/preprocess.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/simulate.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
-    cp mllib/digital_twin.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
     cp mllib/lambda_handler.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
+    #cp mllib/digital_twin.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
+    #cp mllib/quantile_regression.py deployment/pipeline/assets/modelbuild/pipelines/modelbuildpipeline/
 }
 
 cleanup_repository () {
@@ -101,6 +102,7 @@ cleanup_files () {
     rm pipeline/assets/processing-imagebuild.zip
     rm pipeline/assets/training-imagebuild.zip
     rm pipeline/assets/modeldeploy.zip
+    rm -rf cdk.out/asset*
 }
 
 create_virtual_env

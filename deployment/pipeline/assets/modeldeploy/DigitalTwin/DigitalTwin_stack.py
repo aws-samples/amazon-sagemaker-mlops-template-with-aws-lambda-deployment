@@ -3,23 +3,8 @@ from aws_cdk import aws_iam as _iam
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_lambda_event_sources as _event_sources
 from aws_cdk import aws_s3 as _s3
+from aws_cdk import Size
 from constructs import Construct
-
-policy = [
-    _iam.PolicyStatement(
-        actions=[
-            "s3:GetObject*",
-            "s3:GetBucket*",
-            "s3:List*",
-            "s3:DeleteObject*",
-            "s3:PutObject",
-            "s3:Abort*",
-        ],
-        resources=[
-            "arn:aws:s3:::sagemaker-*",
-        ],
-    ),
-]
 
 class DigitalTwinStack(Stack):
 
@@ -31,6 +16,6 @@ class DigitalTwinStack(Stack):
             self, 'DigitalTwin',
             code=_lambda.DockerImageCode.from_image_asset("lambda/digital_twin"),
             memory_size=1024,
-            ephemeral_storage_size=1024,
-            timeout=Duration.seconds(60),
+            ephemeral_storage_size=Size.mebibytes(1024),
+            timeout=Duration.seconds(120),
         )
