@@ -53,6 +53,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
         self.mlops_model_build_role = _iam.Role(
             self,
             "SageMakerMLOpsModelBuildRole",
+            assumed_by=_iam.ServicePrincipal("codebuild.amazonaws.com"),
             description="The SageMakerMLOpsModelBuildRole for service interactions.",
             inline_policies={
                 "SageMakerMLOpsModelBuildPolicy": self.mlops_model_build_policy,
@@ -61,6 +62,7 @@ class SageMakerPipelineSourceCodeStack(Stack):
         self.mlops_model_deploy_role = _iam.Role(
             self,
             "SageMakerMLOpsModelDeployRole",
+            assumed_by=_iam.ServicePrincipal("codebuild.amazonaws.com"),
             description="The SageMakerMLOpsModelDeployRole for service interactions.",
             inline_policies={
                 "SageMakerMLOpsModelDeployPolicy": self.mlops_model_deploy_policy,
@@ -78,21 +80,6 @@ class SageMakerPipelineSourceCodeStack(Stack):
                 "SageMakerMLOpsSagemkerPipelinePolicy": self.mlops_sagemaker_pipeline_policy,
             },
         )
-        # Add more service principals the IAM role can assume  
-        self.mlops_model_build_role.assume_role_policy.add_statements(
-            _iam.PolicyStatement(
-                actions=["sts:AssumeRole"],
-                effect=_iam.Effect.ALLOW,
-                principals=[
-                    _iam.ServicePrincipal("codebuild.amazonaws.com"),
-                ]))
-        self.mlops_model_deploy_role.assume_role_policy.add_statements(
-            _iam.PolicyStatement(
-                actions=["sts:AssumeRole"],
-                effect=_iam.Effect.ALLOW,
-                principals=[
-                    _iam.ServicePrincipal("codebuild.amazonaws.com"),
-                ]))
 
     def create_s3_artifact_bucket(self, **kwargs) -> _s3.Bucket:
         """Create the Amazon S3 bucket to store all ML artifacts in
