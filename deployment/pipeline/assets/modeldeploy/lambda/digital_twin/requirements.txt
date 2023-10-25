@@ -2,7 +2,7 @@ pip==22.1.2
 boto3==1.24.22
 shap==0.41.0
 imbalanced-learn==0.9.1
-werkzeug==2.0.3
+werkzeug==3.0.1
 pandas==1.2.4
 numpy==1.22.0
 xgboost==1.5.2
